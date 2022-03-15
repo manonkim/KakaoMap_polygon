@@ -3,15 +3,13 @@ import { colors, font } from '../style/theme';
 
 export const SearchBar = ({ modalHandler }) => {
   return (
-    <>
-      <SearchBoxWrap>
-        <SearchBox>
-          <SearchIndex />
-          <SearchImg />
-        </SearchBox>
-        <SettingBtn onClick={modalHandler}>지역 설정</SettingBtn>
-      </SearchBoxWrap>
-    </>
+    <SearchBoxWrap>
+      <SearchBox>
+        <SearchIndex />
+        <SearchImg />
+      </SearchBox>
+      <SettingBtn onClick={modalHandler}>지역 설정</SettingBtn>
+    </SearchBoxWrap>
   );
 };
 

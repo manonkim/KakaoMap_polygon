@@ -1,12 +1,13 @@
 export const colors = {
-  lightGray: '#8F999965',
+  lightGray: '#8F99995D',
   fontBlack: '#454545',
-  fontGray: '#646f7c',
+  fontGray: '#646F7C36',
   white: '#ffffff',
   green: '#008D9B',
 };
 
 export const font = {
   sm: '.8rem',
-  m: '1rem',
+  m: '.9rem',
+  l: '1rem',
 };
