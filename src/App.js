@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { AreaSelectModal } from './component/AreaSelectModal';
+import SelectModal from './component/SelectModal';
 import { KakaoMap } from './component/KakaoMap';
 import { SearchBar } from './component/SearchBar';
 
 function App() {
-  const [onModal, setOnModal] = useState(false);
   const [data, setData] = useState([]);
+  const modal = useSelector((state) => state.modal);
 
   useEffect(() => {
     console.log('...loading');
@@ -23,17 +24,13 @@ function App() {
     getData();
   }, []);
 
-  const modalHandler = () => {
-    setOnModal((prev) => !prev);
-  };
-
   return (
     <>
-      <SearchBar modalHandler={modalHandler} data={data} />
-      {onModal && <AreaSelectModal data={data} />}
+      <SearchBar />
+      {modal.modal && <SelectModal data={data} />}
       <KakaoMap />
     </>
   );
 }
 
-export default App;
+export default React.memo(App);

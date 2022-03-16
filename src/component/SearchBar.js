@@ -1,7 +1,13 @@
+import { useDispatch } from 'react-redux';
+import { modalActions } from '../store/store';
 import styled, { css } from 'styled-components';
 import { colors, font } from '../style/theme';
 
-export const SearchBar = ({ modalHandler }) => {
+export const SearchBar = () => {
+  const dispatch = useDispatch();
+  const modalHandler = (e) => {
+    dispatch(modalActions.onModal());
+  };
   return (
     <SearchBoxWrap>
       <SearchBox>
