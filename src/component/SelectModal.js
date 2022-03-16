@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import cityName from '../cityName.json';
-import { colors, font } from '../style/theme';
+import { border, colors, font } from '../style/theme';
 import { Btn } from './SearchBar';
 import { useDispatch } from 'react-redux';
 import { modalActions } from '../store/store';
@@ -15,7 +15,7 @@ function SelectModal({ data }) {
   const [cityData, setCityData] = useState('');
   const [guData, setGuData] = useState('');
   const [selectedGu, setSelectedGu] = useState(new Set(''));
-  const [_, setChecked] = useState(false);
+  const [_, setChecked] = useState([false]);
   const dispatch = useDispatch();
 
   const selectCityHandler = useCallback(
@@ -35,6 +35,7 @@ function SelectModal({ data }) {
     } else if (!isChecked && selectedGu.has(e.target.value)) {
       selectedGu.delete(e.target.value);
       setSelectedGu(selectedGu);
+      setChecked((prev) => !prev);
     }
   };
 
@@ -47,12 +48,18 @@ function SelectModal({ data }) {
     getSelectedData.forEach((data) => console.log(data.polygon));
   };
 
+  const cancleBtnHandler = (e) => {
+    selectedGu.delete(e.target.outerText);
+    setSelectedGu(selectedGu);
+    setChecked((prev) => !prev);
+  };
+
   return (
     <SelectModalContainer>
       <ModalTitle>지역 설정</ModalTitle>
       <SelectHeaderWrap>
         <DropdownWrap>
-          <FormControl variant="standard" sx={{ minWidth: 150 }} size="small">
+          <FormControl variant="standard" sx={{ minWidth: 140 }} size="small">
             <InputLabel id="mutiple-select-label" sx={{ fontSize: '14px' }}>
               시 선택
             </InputLabel>
@@ -78,7 +85,7 @@ function SelectModal({ data }) {
           </FormControl>
           <FormControl
             variant="standard"
-            sx={{ minWidth: 150, marginLeft: 3 }}
+            sx={{ minWidth: 140, marginLeft: 3 }}
             size="small"
           >
             <InputLabel sx={{ fontSize: '14px' }}>구 선택</InputLabel>
@@ -100,7 +107,7 @@ function SelectModal({ data }) {
                 value={data.country}
                 label={data.country}
                 sx={{
-                  marginLeft: '8px',
+                  marginLeft: '10px',
                   color: `${colors.fontBlack}`,
                 }}
                 control={
@@ -121,10 +128,19 @@ function SelectModal({ data }) {
       {cityData.length > 0 && (
         <>
           <SelectedGuTitle>선택 지역</SelectedGuTitle>
-
-          <SelectedGuWrap>
-            {selectedGu.size > 0 && <SelectedGu>{selectedGu}</SelectedGu>}
-          </SelectedGuWrap>
+          <SelectedGuContainer>
+            {selectedGu.size > 0 &&
+              [...selectedGu].map((data) => (
+                <SelectedGuWrap
+                  key={data}
+                  value={data}
+                  onClick={cancleBtnHandler}
+                >
+                  <SelectedGu>{data}</SelectedGu>
+                  <SelectedCancleBtn />
+                </SelectedGuWrap>
+              ))}
+          </SelectedGuContainer>
         </>
       )}
       <ModalCloseBtn onClick={modalCloseHandler}>지역 선택 완료</ModalCloseBtn>
@@ -136,7 +152,7 @@ const SelectModalContainer = styled.div`
   position: fixed;
   top: 120px;
   left: 32vw;
-  width: 690px;
+  width: 680px;
   z-index: 1000;
   padding: 5px 0;
   ${Btn};
@@ -146,7 +162,8 @@ const ModalTitle = styled.header`
   padding: 15px 20px;
   font-size: ${font.l};
   font-weight: 600;
-  border-bottom: 1px solid ${colors.lightGray};
+  border-bottom: ${border.dark};
+  color: ${colors.fontBlack};
 `;
 
 const SelectHeaderWrap = styled.div`
@@ -168,7 +185,7 @@ const AllBtn = styled.button`
   font-size: ${font.sm};
   background-color: ${colors.green};
   color: ${colors.white};
-  border: 1px solid ${colors.lightGray};
+  border: ${border.dark};
   cursor: pointer;
 `;
 
@@ -179,40 +196,67 @@ const RemoveBtn = styled(AllBtn.withComponent('button'))`
 `;
 
 const SelectedCityTitle = styled.div`
-  height: 40px;
+  height: 38px;
   padding: 0px 20px;
-  background-color: #a3a3a32f;
+  background-color: ${colors.lightGray};
   font-size: ${font.m};
-  line-height: 40px;
+  line-height: 38px;
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  height: 215px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  height: 194px;
 `;
 
 const CheckboxWrap = styled.div`
-  border-right: 0.1px solid ${colors.lightGray};
-  border-bottom: 0.1px solid ${colors.lightGray};
-  width: 224px;
-  height: 35px;
+  border-right: ${border.gray};
+  border-bottom: ${border.gray};
+  width: 220px;
+  height: 38px;
 `;
 
 const SelectedGuTitle = styled(SelectedCityTitle.withComponent('div'))`
   background-color: ${colors.white};
-  border-bottom: 0.1px solid ${colors.lightGray};
-  border-top: 0.1px solid ${colors.lightGray};
+  border-bottom: ${border.gray};
+  border-top: ${border.gray};
+  font-weight: 600;
+`;
+
+const SelectedGuContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  height: 80px;
+  margin-bottom: 20px;
+  overflow-y: auto;
 `;
 
 const SelectedGuWrap = styled.div`
-  height: 70px;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 180px;
+  height: 28px;
+  padding: 10px 20px 0px 20px;
+  border-right: ${border.gray};
+  border-bottom: ${border.gray};
+  cursor: pointer;
 `;
-const SelectedGu = styled(CheckboxWrap.withComponent('div'))`
-  font-size: ${font.sm};
+
+const SelectedGu = styled.span`
+  font-size: ${font.m};
+  color: ${colors.fontGray};
+`;
+
+const SelectedCancleBtn = styled.img.attrs({
+  src: './images/cancel.png',
+  alt: 'searchIcon',
+})`
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
 `;
 
 const ModalCloseBtn = styled(AllBtn.withComponent('button'))`
