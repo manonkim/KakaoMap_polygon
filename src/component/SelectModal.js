@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
+import { Loading } from './Loading';
 import cityName from '../cityName.json';
 import { border, colors, font } from '../style/theme';
 import { Btn } from './SearchBar';
@@ -75,94 +76,106 @@ function SelectModal({ data }) {
 
   return (
     <SelectModalContainer>
-      <ModalTitle>지역 설정</ModalTitle>
-      <SelectHeaderWrap>
-        <DropdownWrap>
-          <FormControl variant="standard" sx={{ minWidth: 140 }} size="small">
-            <InputLabel id="mutiple-select-label" sx={{ fontSize: '14px' }}>
-              시 선택
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-standard-label"
-              onChange={selectCityHandler}
-              label="시 선택"
-              value={cityData}
-              sx={{ fontSize: '14px' }}
-            >
-              {cityName.map((data) => (
-                <MenuItem
-                  key={data.id}
-                  value={data.city}
-                  sx={{
-                    fontSize: '14px',
-                  }}
-                >
-                  {data.city}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl
-            variant="standard"
-            sx={{ minWidth: 140, marginLeft: 3 }}
-            size="small"
-          >
-            <InputLabel sx={{ fontSize: '14px' }}>구 선택</InputLabel>
-            <Select sx={{ fontSize: '14px' }} label="구 선택" />
-          </FormControl>
-        </DropdownWrap>
-        <BtnWrap>
-          <AllBtn onClick={allCheckedHandler}>전체선택</AllBtn>
-          <RemoveBtn onClick={allUncheckedHandler}>선택해제</RemoveBtn>
-        </BtnWrap>
-      </SelectHeaderWrap>
-      <SelectedCityTitle>{cityData}</SelectedCityTitle>
-      <CheckboxContainer>
-        {guData &&
-          guData.map((data) => (
-            <CheckboxWrap key={data.code}>
-              <FormControlLabel
-                onChange={selectGuHandler}
-                value={data.country}
-                label={data.country}
-                sx={{
-                  marginLeft: '10px',
-                  color: `${colors.fontBlack}`,
-                }}
-                control={
-                  <Checkbox
-                    size="small"
-                    inputProps={{ 'aria-label': 'controlled' }}
-                    sx={{
-                      '&.Mui-checked': {
-                        color: `${colors.green}`,
-                      },
-                    }}
-                  />
-                }
-              />
-            </CheckboxWrap>
-          ))}
-      </CheckboxContainer>
-      {cityData.length > 0 && (
+      {loading.loading ? (
+        <Loading />
+      ) : (
         <>
-          <SelectedGuTitle>선택 지역</SelectedGuTitle>
-          <SelectedGuContainer>
-            {selectedGu?.size > 0 &&
-              [...selectedGu].map((data) => (
-                <SelectedGuWrap
-                  key={data}
-                  value={data}
-                  onClick={cancleBtnHandler}
+          <ModalTitle>지역 설정</ModalTitle>
+          <SelectHeaderWrap>
+            <DropdownWrap>
+              <FormControl
+                variant="standard"
+                sx={{ minWidth: 140 }}
+                size="small"
+              >
+                <InputLabel id="mutiple-select-label" sx={{ fontSize: '14px' }}>
+                  시 선택
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  onChange={selectCityHandler}
+                  label="시 선택"
+                  value={cityData}
+                  sx={{ fontSize: '14px' }}
                 >
-                  <SelectedGu>{data}</SelectedGu>
-                  <SelectedCancleBtn />
-                </SelectedGuWrap>
+                  {cityName.map((data) => (
+                    <MenuItem
+                      key={data.id}
+                      value={data.city}
+                      sx={{
+                        fontSize: '14px',
+                      }}
+                    >
+                      {data.city}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{ minWidth: 140, marginLeft: 3 }}
+                size="small"
+              >
+                <InputLabel sx={{ fontSize: '14px' }}>구 선택</InputLabel>
+                <Select sx={{ fontSize: '14px' }} label="구 선택" />
+              </FormControl>
+            </DropdownWrap>
+            <BtnWrap>
+              <AllBtn onClick={allCheckedHandler}>전체선택</AllBtn>
+              <RemoveBtn onClick={allUncheckedHandler}>선택해제</RemoveBtn>
+            </BtnWrap>
+          </SelectHeaderWrap>
+          <SelectedCityTitle>{cityData}</SelectedCityTitle>
+          <CheckboxContainer>
+            {guData &&
+              guData.map((data) => (
+                <CheckboxWrap key={data.code}>
+                  <FormControlLabel
+                    onChange={selectGuHandler}
+                    value={data.country}
+                    label={data.country}
+                    sx={{
+                      marginLeft: '10px',
+                      color: `${colors.fontBlack}`,
+                    }}
+                    control={
+                      <Checkbox
+                        size="small"
+                        inputProps={{ 'aria-label': 'controlled' }}
+                        sx={{
+                          '&.Mui-checked': {
+                            color: `${colors.green}`,
+                          },
+                        }}
+                      />
+                    }
+                  />
+                </CheckboxWrap>
               ))}
-          </SelectedGuContainer>
+          </CheckboxContainer>
+          {cityData.length > 0 && (
+            <>
+              <SelectedGuTitle>선택 지역</SelectedGuTitle>
+              <SelectedGuContainer>
+                {selectedGu?.size > 0 &&
+                  [...selectedGu].map((data) => (
+                    <SelectedGuWrap
+                      key={data}
+                      value={data}
+                      onClick={cancleBtnHandler}
+                    >
+                      <SelectedGu>{data}</SelectedGu>
+                      <SelectedCancleBtn />
+                    </SelectedGuWrap>
+                  ))}
+              </SelectedGuContainer>
+            </>
+          )}
+          <ModalCloseBtn onClick={modalCloseHandler}>
+            지역 선택 완료
+          </ModalCloseBtn>
         </>
       )}
-      <ModalCloseBtn onClick={modalCloseHandler}>지역 선택 완료</ModalCloseBtn>
     </SelectModalContainer>
   );
 }
