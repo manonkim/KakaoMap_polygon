@@ -4,7 +4,7 @@ import cityName from '../cityName.json';
 import { border, colors, font } from '../style/theme';
 import { Btn } from './SearchBar';
 import { useDispatch } from 'react-redux';
-import { modalActions } from '../store/store';
+import { modalActions, polygonActions } from '../store/store';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -41,11 +41,13 @@ function SelectModal({ data }) {
 
   const modalCloseHandler = (e) => {
     dispatch(modalActions.onModal());
+    dispatch(polygonActions.polygonReset());
     const guArray = [...selectedGu];
-    const getSelectedData = guData.filter((data) =>
-      guArray.includes(data.country)
-    );
-    getSelectedData.forEach((data) => console.log(data.polygon));
+    const getSelectedData = guData.filter((data) => {
+      return guArray.includes(data.country);
+    });
+    const polygonData = getSelectedData.map((data) => data.polygon);
+    dispatch(polygonActions.polygonData(polygonData));
   };
 
   const cancleBtnHandler = (e) => {
@@ -53,7 +55,6 @@ function SelectModal({ data }) {
     setSelectedGu(selectedGu);
     setChecked((prev) => !prev);
   };
-
   return (
     <SelectModalContainer>
       <ModalTitle>지역 설정</ModalTitle>
