@@ -36,12 +36,12 @@ export function KakaoMap() {
       <MapTypeControl position={kakao.maps.ControlPosition.TOPRIGHT} />
       <Polygon
         path={polygonData}
-        strokeWeight={2}
+        strokeWeight={1}
         strokeColor={`${colors.green}`}
         strokeOpacity={1}
         strokeStyle={'solid'}
         fillColor={`${colors.green}`}
-        fillOpacity={0.2}
+        fillOpacity={0.5}
       />
     </Map>
   );

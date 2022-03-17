@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import SelectModal from './component/SelectModal';
 import { KakaoMap } from './component/KakaoMap';
 import { SearchBar } from './component/SearchBar';
+import { loadingActions } from './store/store';
 
 function App() {
   const [data, setData] = useState([]);
   const modal = useSelector((state) => state.modal);
-
+  const dispatch = useDispatch();
   useEffect(() => {
-    console.log('...loading');
     const getData = async () => {
-      await axios
-        .get(
-          'https://motov-coding-homework.s3.ap-northeast-2.amazonaws.com/country.json'
-        )
-        .then((res) => setData(res.data.maps))
-        .catch((err) => {
-          console.log(err);
-        });
+      try {
+        dispatch(loadingActions.onLoading(true));
+        await axios
+          .get(
+            'https://motov-coding-homework.s3.ap-northeast-2.amazonaws.com/country.json'
+          )
+          .then((res) => setData(res.data.maps));
+      } catch (err) {
+        console.log(err);
+      }
+      dispatch(loadingActions.onLoading(false));
     };
     getData();
   }, []);

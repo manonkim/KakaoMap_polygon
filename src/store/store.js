@@ -30,14 +30,26 @@ const polygonSlice = createSlice({
   },
 });
 
+const loadingSlice = createSlice({
+  name: 'loading',
+  initialState: { loading: false },
+  reducers: {
+    onLoading(state, action) {
+      state.loading = action.payload;
+    },
+  },
+});
+
 const store = configureStore({
   reducer: {
     modal: modalSlice.reducer,
     polygon: polygonSlice.reducer,
+    loading: loadingSlice.reducer,
   },
 });
 
 export const modalActions = modalSlice.actions;
 export const polygonActions = polygonSlice.actions;
+export const loadingActions = loadingSlice.actions;
 
 export default store;

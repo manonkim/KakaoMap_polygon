@@ -3,21 +3,22 @@ import { modalActions } from '../store/store';
 import styled, { css } from 'styled-components';
 import { colors, font } from '../style/theme';
 
-export const SearchBar = () => {
+export function SearchBar() {
   const dispatch = useDispatch();
   const modalHandler = (e) => {
     dispatch(modalActions.onModal());
   };
+
   return (
     <SearchBoxWrap>
       <SearchBox>
-        <SearchIndex />
+        <SearchIndex onClick={modalHandler} />
         <SearchImg />
       </SearchBox>
       <SettingBtn onClick={modalHandler}>지역 설정</SettingBtn>
     </SearchBoxWrap>
   );
-};
+}
 
 export const Btn = css`
   background-color: ${colors.white};

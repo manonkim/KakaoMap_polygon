@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import cityName from '../cityName.json';
 import { border, colors, font } from '../style/theme';
 import { Btn } from './SearchBar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { modalActions, polygonActions } from '../store/store';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,8 +15,10 @@ function SelectModal({ data }) {
   const [cityData, setCityData] = useState('');
   const [guData, setGuData] = useState('');
   const [selectedGu, setSelectedGu] = useState(new Set(''));
-  const [_, setChecked] = useState([false]);
+  const [isAllChecked, setIsAllChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.loading);
 
   const selectCityHandler = useCallback(
     (e) => {
@@ -39,15 +41,30 @@ function SelectModal({ data }) {
     }
   };
 
+  const allCheckedHandler = () => {
+    setSelectedGu(new Set(guData.map((data) => data.country)));
+    setIsAllChecked(true);
+  };
+
+  const allUncheckedHandler = () => {
+    selectedGu.clear();
+    setSelectedGu(setSelectedGu);
+    setIsAllChecked(true);
+  };
+
   const modalCloseHandler = (e) => {
-    dispatch(modalActions.onModal());
-    dispatch(polygonActions.polygonReset());
-    const guArray = [...selectedGu];
-    const getSelectedData = guData.filter((data) => {
-      return guArray.includes(data.country);
-    });
-    const polygonData = getSelectedData.map((data) => data.polygon);
-    dispatch(polygonActions.polygonData(polygonData));
+    if (selectedGu.size > 0) {
+      dispatch(modalActions.onModal());
+      dispatch(polygonActions.polygonReset());
+      const guArray = [...selectedGu];
+      const getSelectedData = guData.filter((data) => {
+        return guArray.includes(data.country);
+      });
+      const polygonData = getSelectedData.map((data) => data.polygon);
+      dispatch(polygonActions.polygonData(polygonData));
+    } else {
+      dispatch(modalActions.onModal());
+    }
   };
 
   const cancleBtnHandler = (e) => {
@@ -55,6 +72,7 @@ function SelectModal({ data }) {
     setSelectedGu(selectedGu);
     setChecked((prev) => !prev);
   };
+
   return (
     <SelectModalContainer>
       <ModalTitle>지역 설정</ModalTitle>
@@ -94,8 +112,8 @@ function SelectModal({ data }) {
           </FormControl>
         </DropdownWrap>
         <BtnWrap>
-          <AllBtn>전체선택</AllBtn>
-          <RemoveBtn>선택해제</RemoveBtn>
+          <AllBtn onClick={allCheckedHandler}>전체선택</AllBtn>
+          <RemoveBtn onClick={allUncheckedHandler}>선택해제</RemoveBtn>
         </BtnWrap>
       </SelectHeaderWrap>
       <SelectedCityTitle>{cityData}</SelectedCityTitle>
@@ -130,7 +148,7 @@ function SelectModal({ data }) {
         <>
           <SelectedGuTitle>선택 지역</SelectedGuTitle>
           <SelectedGuContainer>
-            {selectedGu.size > 0 &&
+            {selectedGu?.size > 0 &&
               [...selectedGu].map((data) => (
                 <SelectedGuWrap
                   key={data}
